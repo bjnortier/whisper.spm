@@ -14,7 +14,7 @@ let resources: [Resource] = [
 ]
 let additionalSources: [String] = ["Sources/whisper/ggml-metal.m"]
 let additionalSettings: [CSetting] = [
-    // .unsafeFlags(["-fno-objc-arc"]),
+    .unsafeFlags(["-fno-objc-arc"]),
     .define("GGML_USE_METAL")
 ]
 #else
