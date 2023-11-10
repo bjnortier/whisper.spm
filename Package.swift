@@ -9,6 +9,9 @@ let platforms: [SupportedPlatform]? = [
     .tvOS(.v14)
 ]
 let exclude: [String] = []
+let resources: [Resource] = [
+    .process("Sources/whisper/ggml-metal.metal")
+]
 let additionalSources: [String] = ["Sources/whisper/ggml-metal.m"]
 let additionalSettings: [CSetting] = [
     // .unsafeFlags(["-fno-objc-arc"]),
