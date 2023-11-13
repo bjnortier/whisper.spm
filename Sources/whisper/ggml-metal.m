@@ -6,6 +6,7 @@
 #import <Foundation/Foundation.h>
 
 #import <Metal/Metal.h>
+#import "XYZPerson.h"
 
 #undef MIN
 #undef MAX
@@ -196,13 +197,17 @@ struct ggml_metal_context * ggml_metal_init(int n_cb) {
     // load library
     {
         NSBundle * bundle = nil;
+        NSString * libPath = nil;
 #ifdef SWIFT_PACKAGE
-        bundle = SWIFTPM_MODULE_BUNDLE;
+        bundle = [NSBundle bundleForClass:[XYZPerson class]];
+        NSLog(@"Bundle path: %@", bundle.resourcePath);
+        libPath = [bundle.resourcePath stringByAppendingString: @"/whisper.spm_metal-lib.bundle/Contents/Resources/default.metallib"];
+        
 #else
         bundle = [NSBundle bundleForClass:[GGMLMetalClass class]];
+        libPath = [bundle pathForResource:@"default" ofType:@"metallib"];
 #endif
         NSError * error = nil;
-        NSString * libPath = [bundle pathForResource:@"default" ofType:@"metallib"];
         if (libPath != nil) {
             NSURL * libURL = [NSURL fileURLWithPath:libPath];
             GGML_METAL_LOG_INFO("%s: loading '%s'\n", __func__, [libPath UTF8String]);

@@ -887,6 +887,17 @@ static void kv_cache_free(struct whisper_kv_cache & cache) {
     }
 }
 
+void metal_log_cb(enum ggml_log_level level, const char * text, void * user_data) {
+    if (level == GGML_LOG_LEVEL_ERROR) {
+        printf("[ERROR]");
+    } else if (level == GGML_LOG_LEVEL_WARN) {
+        printf("[WARN]");
+    } else if (level == GGML_LOG_LEVEL_INFO) {
+        printf("[INFO]");
+    }
+    printf("%s\n", text);
+}
+
 // load the model from a ggml file
 //
 // file format:
@@ -1224,7 +1235,7 @@ static bool whisper_model_load(struct whisper_model_loader * loader, whisper_con
             /*.mem_buffer =*/ wctx.model.buf->data(),
             /*.no_alloc   =*/ false,
         };
-
+        ggml_metal_log_set_callback(metal_log_cb, NULL);
         model.ctx = ggml_init(params);
         if (!model.ctx) {
             log("%s: ggml_init() failed\n", __func__);
@@ -5226,6 +5237,8 @@ int whisper_full_with_state(
 
     return 0;
 }
+
+
 
 int whisper_full(
         struct whisper_context * ctx,
