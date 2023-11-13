@@ -14,6 +14,9 @@ let additionalSettings: [CSetting] = [
     .unsafeFlags(["-fno-objc-arc"]),
     .define("GGML_USE_METAL")
 ]
+let resources: [Resource] = [
+    .process("ggml-metal.metal")
+]
 #else
 let platforms: [SupportedPlatform]? = nil
 let exclude: [String] = ["Sources/whisper/ggml-metal.m", "Sources/whisper/ggml-metal.metal"]
@@ -27,17 +30,14 @@ let package = Package(
         .library(
             name: "whisper",
             targets: ["whisper"]
-        ),
-        .library(
-            name: "whispercpp",
-            targets: ["whispercpp"]
         )
     ],
     targets: [
         .target(
             name: "whisper",
             exclude: exclude,
-            publicHeadersPath: ".",
+            resources: resources,
+            publicHeadersPath: "include",
             cSettings: [
                 .unsafeFlags(["-Wno-shorten-64-to-32"]),
                 .define("GGML_USE_ACCELERATE")
@@ -46,13 +46,8 @@ let package = Package(
                 .linkedFramework("Accelerate")
             ]
         ),
-        .target(
-            name: "whispercpp",
-            dependencies: ["whisper"],
-            publicHeadersPath: "include"
-        ),
-        .target(name: "test-objc", dependencies: ["whispercpp"]),
-        .target(name: "test-swift", dependencies: ["whispercpp"])
+        .target(name: "test-objc", dependencies: ["whisper"]),
+        .target(name: "test-swift", dependencies: ["whisper"])
     ],
     cxxLanguageStandard: CXXLanguageStandard.cxx11
 )
